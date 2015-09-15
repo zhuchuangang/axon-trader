@@ -8,5 +8,26 @@
 *.war
 *.ear
 
+*.class
+*.log
+
+#maven
+*/target
+target
+
+#eclipse
+/.settings
+/.project
+/.classpath
+/derby.log
+
+# IntelliJ Idea
+.idea/
+out/
+*.ipr
+*.iws
+*.iml
+/bin
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
