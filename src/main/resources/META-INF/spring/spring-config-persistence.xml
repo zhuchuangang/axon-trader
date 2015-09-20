@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
@@ -8,16 +7,15 @@
        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
-
-    <beans profile="hsqldb">
-        <jdbc:embedded-database id="dataSource" type="HSQL"/>
-    </beans>
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <beans profile="mongodb">
+        <mongo:mongo id="mongo" host="127.0.0.1" port="27017"/>
+
         <bean id="mongoSpringTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
             <constructor-arg name="mongo" ref="mongo"/>
-            <constructor-arg name="databaseName" value="axontrader"/>
+            <constructor-arg name="databaseName" value="trader"/>
         </bean>
 
         <bean id="mongoTemplate" class="org.axonframework.eventstore.mongo.DefaultMongoTemplate">
@@ -45,6 +43,7 @@
             </constructor-arg>
         </bean>
 
-        <mongo:mongo id="mongo" host="127.0.0.1" port="27017"/>
+        <mongo:repositories base-package="com.szss.axon.trader.query.users.repositories"
+                            mongo-template-ref="mongoSpringTemplate"/>
     </beans>
 </beans>

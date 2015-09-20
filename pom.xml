@@ -16,7 +16,7 @@
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
 
-        <spring.version>4.0.6.RELEASE</spring.version>
+        <spring.version>4.1.6.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
 
         <!-- TODO check these for updates -->
@@ -31,7 +31,7 @@
 
         <!-- data store libraries -->
         <mongodb.java.version>2.11.3</mongodb.java.version>
-        <springdata.mongodb.version>1.5.2.RELEASE</springdata.mongodb.version>
+        <springdata.mongodb.version>1.8.0.RELEASE</springdata.mongodb.version>
         <springdata.jpa.version>1.6.2.RELEASE</springdata.jpa.version>
         <hibernate.em.version>4.3.6.Final</hibernate.em.version>
         <hibernate.javax.version>1.0.0.Final</hibernate.javax.version>
@@ -49,57 +49,58 @@
         <maven.tomcat7.version>2.2</maven.tomcat7.version>
     </properties>
 
-    <dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <dependencies>
         <!--spring-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>${spring.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
+            <artifactId>spring-webmvc</artifactId>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>org.springframework</groupId>-->
-        <!--<artifactId>spring-framework-bom</artifactId>-->
-        <!--<version>${spring.version}</version>-->
-        <!--<type>pom</type>-->
-        <!--<scope>import</scope>-->
-        <!--</dependency>-->
-
+        <!--spring data-->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>${springdata.mongodb.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>${springdata.jpa.version}</version>
-        </dependency>
 
         <!--mongodb java driver-->
         <dependency>
@@ -241,13 +242,6 @@
             <artifactId>hamcrest-all</artifactId>
             <version>${hamcrest.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <!-- Global dependencies -->
-        <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-            <version>1.1</version>
         </dependency>
 
         <!--  logging  -->

@@ -1,16 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:axon="http://www.axonframework.org/schema/core"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.axonframework.org/schema/core
-       http://www.axonframework.org/schema/axon-core.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.axonframework.org/schema/axon-core.xsd">
 
     <axon:annotation-config/>
-
-    <context:component-scan base-package="com.szss.axon"/>
 
     <axon:event-bus id="eventBus"/>
 
@@ -19,6 +17,10 @@
             <bean class="org.axonframework.commandhandling.interceptors.BeanValidationInterceptor"/>
         </axon:dispatchInterceptors>
     </axon:command-bus>
+
+    <bean id="commandGateway" class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+        <property name="commandBus" ref="commandBus"/>
+    </bean>
 
     <bean id="snapshotter" class="org.axonframework.eventsourcing.SpringAggregateSnapshotter">
         <property name="eventStore" ref="eventStore"/>
@@ -32,6 +34,7 @@
     </bean>
 
     <bean id="ehcache" class="org.axonframework.cache.EhCacheAdapter">
+
         <constructor-arg name="ehCache" ref="wrappedEhcache"/>
     </bean>
 
@@ -41,17 +44,6 @@
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
 
-    <beans profile="hsqldb">
-
-        <axon:jdbc-event-store id="eventStore" data-source="dataSource" sql-schema="eventSqlSchema"/>
-
-        <axon:jdbc-saga-repository id="sagaRepository" data-source="dataSource" sql-schema="sagaSqlSchema"/>
-
-        <bean id="eventSqlSchema" class="org.axonframework.eventstore.jdbc.GenericEventSqlSchema"/>
-
-        <bean id="sagaSqlSchema" class="org.axonframework.saga.repository.jdbc.HsqlSagaSqlSchema"/>
-
-    </beans>
 
     <beans profile="mongodb">
         <bean id="eventStore" class="org.axonframework.eventstore.mongo.MongoEventStore">
@@ -64,7 +56,6 @@
                 <bean class="org.axonframework.saga.spring.SpringResourceInjector"/>
             </property>
         </bean>
-
     </beans>
 
 

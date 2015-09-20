@@ -1,20 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) 2010-2012. Axon Framework
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -24,26 +8,38 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!--扫描标注@Component, @Repository,@Service, @Controller的类-->
-    <context:component-scan base-package="com.szss.axon.trader.webui"/>
+    <context:component-scan base-package="com.szss.axon.trader.webui.controller">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
 
+    <!--开启mvc支持，并开启spring model的数据验证-->
     <mvc:annotation-driven validator="validator"/>
 
+    <!--收到相应请求后直接选择相应的视图返回-->
     <mvc:view-controller path="/index.html"/>
 
+    <!--逻辑静态资源路径到物理静态资源路径的支持-->
     <mvc:resources mapping="/js/**" location="/js/" cache-period="31556926"/>
     <mvc:resources mapping="/style/**" location="/style/" cache-period="31556926"/>
 
+    <!--当在 web.xml 中 DispatcherServlet 使用<url-pattern>/</url-pattern> 映射时,能映射静态资源
+    (当 Spring Web MVC 框架没有处理请求对应的控制器时(如一些静态资源),转交给默认的Servlet来响应静态文件,否则报 404 找不到资源错误,)-->
     <mvc:default-servlet-handler/>
 
+
+    <!--用于支持 Servlet、JSP 视图解析-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--prefix 和 suffix:查找视图页面的前缀和后缀-->
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <!-- 以下 validator  ConversionService 在使用 mvc:annotation-driven 会 自动注册-->
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
         <property name="validationMessageSource" ref="messageSource"/>
     </bean>
 
+    <!-- 如果不加默认到 使用classpath下的 validation.properties和fields.properties -->
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
