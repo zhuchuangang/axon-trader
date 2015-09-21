@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/data/mongo
        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
 		http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/jdbc
-		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <beans profile="mongodb">
+        <!--mongodb的链接-->
         <mongo:mongo id="mongo" host="127.0.0.1" port="27017"/>
 
+        <!--使用spring data mongodb的模板-->
         <bean id="mongoSpringTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
             <constructor-arg name="mongo" ref="mongo"/>
             <constructor-arg name="databaseName" value="trader"/>
         </bean>
 
+        <!--使用axon mongodb时间存储的的模板-->
         <bean id="mongoTemplate" class="org.axonframework.eventstore.mongo.DefaultMongoTemplate">
             <constructor-arg index="0" ref="mongo"/>
-            <constructor-arg index="1" value="axontrader"/>
+            <constructor-arg index="1" value="trader"/>
             <constructor-arg index="2" value="domainevents"/>
             <constructor-arg index="3" value="snapshotevents"/>
             <constructor-arg index="4">
@@ -33,7 +33,7 @@
 
         <bean id="mongoSagaTemplate" class="org.axonframework.saga.repository.mongo.DefaultMongoTemplate">
             <constructor-arg index="0" ref="mongo"/>
-            <constructor-arg index="1" value="axontrader"/>
+            <constructor-arg index="1" value="trader"/>
             <constructor-arg index="2" value="snapshotevents"/>
             <constructor-arg index="3">
                 <null/>

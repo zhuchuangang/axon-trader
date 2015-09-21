@@ -121,6 +121,12 @@
             <artifactId>axon-mongo</artifactId>
             <version>${axon.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.axonframework</groupId>
+            <artifactId>axon-amqp</artifactId>
+            <version>${axon.version}</version>
+        </dependency>
+
 
         <!--hibernate-->
         <dependency>

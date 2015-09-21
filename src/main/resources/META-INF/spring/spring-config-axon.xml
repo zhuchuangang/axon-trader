@@ -3,10 +3,13 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:axon="http://www.axonframework.org/schema/core"
        xmlns="http://www.springframework.org/schema/beans"
+       xmlns:axon-amqp="http://www.axonframework.org/schema/amqp"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.axonframework.org/schema/core
-       http://www.axonframework.org/schema/axon-core.xsd">
+       http://www.axonframework.org/schema/axon-core.xsd
+       http://www.axonframework.org/schema/amqp
+       http://www.axonframework.org/schema/axon-amqp.xsd">
 
     <axon:annotation-config/>
 
@@ -34,7 +37,6 @@
     </bean>
 
     <bean id="ehcache" class="org.axonframework.cache.EhCacheAdapter">
-
         <constructor-arg name="ehCache" ref="wrappedEhcache"/>
     </bean>
 
@@ -44,6 +46,22 @@
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
 
+
+    <axon:event-sourcing-repository id="userRepository"
+                                    aggregate-type="com.szss.axon.trader.users.command.User"
+                                    cache-ref="ehcache"
+                                    event-bus="eventBus"
+                                    event-store="eventStore">
+        <axon:snapshotter-trigger event-count-threshold="50" snapshotter-ref="snapshotter"/>
+    </axon:event-sourcing-repository>
+
+    <axon-amqp:terminal id="terminal"
+                        connection-factory="amqpConnection" serializer="serializer" exchange-name="AxonEventBusExchange">
+        <axon-amqp:default-configuration transaction-manager="transactionManager" transaction-size="25" prefetch="200"
+                                         error-handler="loggingErrorHandler"/>
+    </axon-amqp:terminal>
+
+    <bean id="amqpConnection" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory"/>
 
     <beans profile="mongodb">
         <bean id="eventStore" class="org.axonframework.eventstore.mongo.MongoEventStore">
@@ -57,6 +75,4 @@
             </property>
         </bean>
     </beans>
-
-
 </beans>
