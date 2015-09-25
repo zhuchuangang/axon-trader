@@ -13,7 +13,9 @@
 
     <axon:annotation-config/>
 
-    <axon:event-bus id="eventBus"/>
+    <bean id="commandGateway" class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+        <property name="commandBus" ref="commandBus"/>
+    </bean>
 
     <axon:command-bus id="commandBus">
         <axon:dispatchInterceptors>
@@ -21,9 +23,8 @@
         </axon:dispatchInterceptors>
     </axon:command-bus>
 
-    <bean id="commandGateway" class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
-        <property name="commandBus" ref="commandBus"/>
-    </bean>
+    <axon:event-bus id="eventBus"/>
+
 
     <bean id="snapshotter" class="org.axonframework.eventsourcing.SpringAggregateSnapshotter">
         <property name="eventStore" ref="eventStore"/>
@@ -55,13 +56,14 @@
         <axon:snapshotter-trigger event-count-threshold="50" snapshotter-ref="snapshotter"/>
     </axon:event-sourcing-repository>
 
-    <axon-amqp:terminal id="terminal"
-                        connection-factory="amqpConnection" serializer="serializer" exchange-name="AxonEventBusExchange">
-        <axon-amqp:default-configuration transaction-manager="transactionManager" transaction-size="25" prefetch="200"
-                                         error-handler="loggingErrorHandler"/>
-    </axon-amqp:terminal>
 
-    <bean id="amqpConnection" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory"/>
+    <!--<axon:cluster id="replayingCluster">-->
+        <!--&lt;!&ndash; the next element makes this Cluster replayable &ndash;&gt;-->
+        <!--<axon:replay-config event-store="eventStore" transaction-manager="transactionManager"/>-->
+        <!--<axon:selectors>-->
+            <!--<axon:package prefix="package.with.replayable.listeners"/>-->
+        <!--</axon:selectors>-->
+    <!--</axon:cluster>-->
 
     <beans profile="mongodb">
         <bean id="eventStore" class="org.axonframework.eventstore.mongo.MongoEventStore">
