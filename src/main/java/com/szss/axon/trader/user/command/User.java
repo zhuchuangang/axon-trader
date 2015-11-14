@@ -1,4 +1,4 @@
-package com.szss.axon.trader.users.command;
+package com.szss.axon.trader.user.command;
 
 import com.szss.axon.trader.api.users.UserCreatedEvent;
 import com.szss.axon.trader.api.users.UserId;

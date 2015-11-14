@@ -55,21 +55,26 @@
 
 
     <axon:event-sourcing-repository id="userRepository"
-                                    aggregate-type="com.szss.axon.trader.users.command.User"
+                                    aggregate-type="com.szss.axon.trader.user.command.User"
                                     cache-ref="ehcache"
                                     event-bus="eventBus"
                                     event-store="eventStore">
         <axon:snapshotter-trigger event-count-threshold="50" snapshotter-ref="snapshotter"/>
     </axon:event-sourcing-repository>
 
+    <bean id="serializer" class="org.axonframework.serializer.json.JacksonSerializer" />
 
-    <!--<axon:cluster id="replayingCluster">-->
-    <!--&lt;!&ndash; the next element makes this Cluster replayable &ndash;&gt;-->
-    <!--<axon:replay-config event-store="eventStore" transaction-manager="transactionManager"/>-->
-    <!--<axon:selectors>-->
-    <!--<axon:package prefix="package.with.replayable.listeners"/>-->
-    <!--</axon:selectors>-->
-    <!--</axon:cluster>-->
+    <axon-amqp:terminal id="terminal" exchange-name="${rabbitmq.eventbus.exchange}" serializer="serializer">
+        <axon-amqp:default-configuration/>
+    </axon-amqp:terminal>
+
+    <axon:cluster id="cluster" default="true">
+        <axon:meta-data>
+            <entry key="AMQP.Config">
+                <axon-amqp:configuration queue-name="${rabbitmq.eventbus.queue}"/>
+            </entry>
+        </axon:meta-data>
+    </axon:cluster>
 
     <beans profile="mongodb">
         <bean id="eventStore" class="org.axonframework.eventstore.mongo.MongoEventStore">

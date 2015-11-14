@@ -13,7 +13,7 @@
     密码<br/>
     <input type="password" name="password"><br/>
     <br/>
-    <button type="submit" value="新增"/>
+    <input type="submit" value="新增"/>
 </form>
 </body>
 </html>

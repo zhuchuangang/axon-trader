@@ -1,4 +1,4 @@
-package com.szss.axon.trader.users.command;
+package com.szss.axon.trader.user.command;
 
 import com.szss.axon.trader.api.users.AuthenticateUserCommand;
 import com.szss.axon.trader.api.users.CreatedUserCommand;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserCommandHandler {
-
     @Autowired
     private UserQueryRepository userQueryRepository;
 

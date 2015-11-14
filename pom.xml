@@ -19,10 +19,10 @@
 
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
+        <spring-rabbit.version>1.5.1.RELEASE</spring-rabbit.version>
         <freemarker.version>2.3.23</freemarker.version>
         <jackson.version>2.6.2</jackson.version>
 
-        <!-- TODO check these for updates -->
         <javax.validation.version>1.0.0.GA</javax.validation.version>
         <httpclient.version>4.1.3</httpclient.version>
         <commons.io.version>1.4</commons.io.version>
@@ -37,6 +37,10 @@
         <springdata.jpa.version>1.6.2.RELEASE</springdata.jpa.version>
         <hibernate.em.version>4.3.6.Final</hibernate.em.version>
         <hibernate.javax.version>1.0.0.Final</hibernate.javax.version>
+        <mybatis.version>3.2.8</mybatis.version>
+        <mybatis-spring.version>1.2.2</mybatis-spring.version>
+        <mysql.version>5.1.37</mysql.version>
+        <druid.version>1.0.11</druid.version>
 
         <!-- Test libraries-->
         <junit.version>4.11</junit.version>
@@ -126,6 +130,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <version>${spring-rabbit.version}</version>
         </dependency>
 
         <!--spring data-->
@@ -293,6 +303,7 @@
             <version>${jackson.version}</version>
         </dependency>
 
+
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
@@ -338,6 +349,31 @@
             <groupId>org.logback-extensions</groupId>
             <artifactId>logback-ext-spring</artifactId>
             <version>${logback.ext.version}</version>
+        </dependency>
+
+        <!-- MyBatis -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${mybatis-spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+        <!--druid数据库链接池-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
         </dependency>
 
         <!-- Global test dependencies -->
@@ -389,9 +425,26 @@
             </activation>
             <properties>
                 <logback_maven.home>/Users/zcg/axon-sample-log</logback_maven.home>
+                <connection_maven.driver_class>com.mysql.jdbc.Driver</connection_maven.driver_class>
+                <druid.connectionProperties>config.decrypt=false</druid.connectionProperties>
+                <druid_maven.initialSize>1</druid_maven.initialSize>
+                <druid_maven.minIdle>1</druid_maven.minIdle>
+                <druid_maven.maxActive>100</druid_maven.maxActive>
+                <connection_maven.url>jdbc:mysql://192.168.10.95:3306/szss</connection_maven.url>
+                <connection_maven.username>szss</connection_maven.username>
+                <connection_maven.password>szss</connection_maven.password>
                 <mongodb_maven.host>127.0.0.1</mongodb_maven.host>
                 <mongodb_maven.port>27017</mongodb_maven.port>
                 <mongodb_maven.databaseName>trader</mongodb_maven.databaseName>
+                <rabbitmq_maven.host>192.168.10.95</rabbitmq_maven.host>
+                <rabbitmq_maven.port>5672</rabbitmq_maven.port>
+                <rabbitmq_maven.vhost>/axon</rabbitmq_maven.vhost>
+                <rabbitmq_maven.username>szss</rabbitmq_maven.username>
+                <rabbitmq_maven.password>szss</rabbitmq_maven.password>
+                <rabbitmq_maven.eventbus.queue>axon.eventbus.queue</rabbitmq_maven.eventbus.queue>
+                <rabbitmq_maven.eventbus.exchange>axon.eventbus.exchange</rabbitmq_maven.eventbus.exchange>
+                <rabbitmq_maven.queue>axon.user.queue</rabbitmq_maven.queue>
+                <rabbitmq_maven.exchange>axon.user.exchange</rabbitmq_maven.exchange>
             </properties>
         </profile>
     </profiles>

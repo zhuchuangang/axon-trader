@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 异步的线程池，线程池的最在数不能设定太小，不然<rabbit:listener/>/@RabbitListener太多的话，会出现发无法正常消费问题 -->
+    <!--<task:executor id="taskExecutor" pool-size="4-256" queue-capacity="128"/>-->
+
+    <!-- queue litener 观察 监听模式 当有消息到达时会通知监听在对应的队列上的监听对象 -->
+    <rabbit:annotation-driven/>
+
+    <rabbit:connection-factory id="connectionFactory"
+                               host="${rabbitmq.host}"
+                               port="${rabbitmq.port}"
+                               virtual-host="${rabbitmq.vhost}"
+                               username="${rabbitmq.username}"
+                               password="${rabbitmq.password}"/>
+
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory" reply-timeout="1000"
+                     message-converter="jsonMessageConverter" exchange="${rabbitmq.exchange}"/>
+
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <rabbit:queue name="${rabbitmq.queue}"/>
+
+    <rabbit:direct-exchange name="${rabbitmq.exchange}">
+        <rabbit:bindings>
+            <rabbit:binding queue="${rabbitmq.queue}"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <bean id="rabbitListenerContainerFactory"
+          class="org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <!--<property name="transactionManager" ref="transactionManager" />-->
+        <property name="concurrentConsumers" value="1"/>
+        <property name="maxConcurrentConsumers" value="10"/>
+        <property name="messageConverter" ref="jsonMessageConverter"/>
+        <!--<property name="taskExecutor" ref="taskExecutor" />-->
+        <property name="channelTransacted" value="true"/>
+        <property name="adviceChain">
+            <array>
+                <ref bean="retryInterceptor"/>
+            </array>
+        </property>
+    </bean>
+
+    <bean id="retryInterceptor"
+          class="org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptorFactoryBean">
+        <property name="messageRecoverer" ref="messageRecoverer"/>
+        <property name="retryOperations" ref="retryTemplate"/>
+    </bean>
+
+    <bean id="messageRecoverer" class="org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer"/>
+    <!-- 拒绝请求消息，并回复该请求者的请求被服务端拒绝-->
+
+    <bean id="retryTemplate" class="org.springframework.retry.support.RetryTemplate">
+        <property name="backOffPolicy">
+            <bean class="org.springframework.retry.backoff.ExponentialBackOffPolicy">
+                <property name="initialInterval" value="1000"/>
+                <property name="maxInterval" value="10000"/>
+            </bean>
+        </property>
+        <property name="retryPolicy">
+            <bean class="org.springframework.retry.policy.SimpleRetryPolicy">
+                <property name="maxAttempts" value="1"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="jsonMessageConverter"
+          class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"></bean>
+
+</beans>
