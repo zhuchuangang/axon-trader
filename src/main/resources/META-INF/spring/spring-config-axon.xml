@@ -11,32 +11,38 @@
        http://www.axonframework.org/schema/amqp
        http://www.axonframework.org/schema/axon-amqp.xsd">
 
+    <!--开启axon的annotation功能，使用标注@CommandHandler 和 @EventHandler起作用-->
     <axon:annotation-config/>
 
+    <!--命令网关-->
     <bean id="commandGateway" class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
         <property name="commandBus" ref="commandBus"/>
     </bean>
 
+    <!--命令总线-->
     <axon:command-bus id="commandBus">
         <axon:dispatchInterceptors>
             <bean class="org.axonframework.commandhandling.interceptors.BeanValidationInterceptor"/>
         </axon:dispatchInterceptors>
     </axon:command-bus>
 
+    <!--事件总线-->
     <axon:event-bus id="eventBus"/>
 
-
+    <!--事件快照-->
     <bean id="snapshotter" class="org.axonframework.eventsourcing.SpringAggregateSnapshotter">
         <property name="eventStore" ref="eventStore"/>
         <property name="executor" ref="taskExecutor"/>
     </bean>
 
+    <!--定时任务-->
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <property name="corePoolSize" value="2"/>
         <property name="maxPoolSize" value="5"/>
         <property name="waitForTasksToCompleteOnShutdown" value="true"/>
     </bean>
 
+    <!--ehcache缓存-->
     <bean id="ehcache" class="org.axonframework.cache.EhCacheAdapter">
         <constructor-arg name="ehCache" ref="wrappedEhcache"/>
     </bean>
@@ -58,11 +64,11 @@
 
 
     <!--<axon:cluster id="replayingCluster">-->
-        <!--&lt;!&ndash; the next element makes this Cluster replayable &ndash;&gt;-->
-        <!--<axon:replay-config event-store="eventStore" transaction-manager="transactionManager"/>-->
-        <!--<axon:selectors>-->
-            <!--<axon:package prefix="package.with.replayable.listeners"/>-->
-        <!--</axon:selectors>-->
+    <!--&lt;!&ndash; the next element makes this Cluster replayable &ndash;&gt;-->
+    <!--<axon:replay-config event-store="eventStore" transaction-manager="transactionManager"/>-->
+    <!--<axon:selectors>-->
+    <!--<axon:package prefix="package.with.replayable.listeners"/>-->
+    <!--</axon:selectors>-->
     <!--</axon:cluster>-->
 
     <beans profile="mongodb">

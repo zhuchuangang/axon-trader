@@ -1,16 +1,23 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: zcg
-  Date: 15/9/18
-  Time: 下午2:58
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<%String base=request.getContextPath();%>
+<!DOCTYPE  html>
+<html lang="zh-cn">
 <head>
-    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+</head>
+<head>
+    <title>登录</title>
 </head>
 <body>
-${user.name}
+<form id="login-form" action="${base}/main?method=login" method="post">
+    <p>用户名:</p>
+  <input name="username" type="text"/>
+    <p>密&nbsp;码:</p>
+  <input name="password" type="password"/>
+    <br/> <br/>
+  <input type="submit" value="提交"/>
+</form>
 </body>
 </html>

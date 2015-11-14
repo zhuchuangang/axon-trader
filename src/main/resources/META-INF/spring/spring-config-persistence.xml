@@ -9,18 +9,18 @@
 
     <beans profile="mongodb">
         <!--mongodb的链接-->
-        <mongo:mongo id="mongo" host="127.0.0.1" port="27017"/>
+        <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}"/>
 
         <!--使用spring data mongodb的模板-->
         <bean id="mongoSpringTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
             <constructor-arg name="mongo" ref="mongo"/>
-            <constructor-arg name="databaseName" value="trader"/>
+            <constructor-arg name="databaseName" value="${mongodb.databaseName}"/>
         </bean>
 
-        <!--使用axon mongodb时间存储的的模板-->
+        <!--使用axon mongodb事件存储的的模板-->
         <bean id="mongoTemplate" class="org.axonframework.eventstore.mongo.DefaultMongoTemplate">
             <constructor-arg index="0" ref="mongo"/>
-            <constructor-arg index="1" value="trader"/>
+            <constructor-arg index="1" value="${mongodb.databaseName}"/>
             <constructor-arg index="2" value="domainevents"/>
             <constructor-arg index="3" value="snapshotevents"/>
             <constructor-arg index="4">
@@ -31,9 +31,10 @@
             </constructor-arg>
         </bean>
 
+        <!--使用axon mongodb saga事件存储的的模板-->
         <bean id="mongoSagaTemplate" class="org.axonframework.saga.repository.mongo.DefaultMongoTemplate">
             <constructor-arg index="0" ref="mongo"/>
-            <constructor-arg index="1" value="trader"/>
+            <constructor-arg index="1" value="${mongodb.databaseName}"/>
             <constructor-arg index="2" value="snapshotevents"/>
             <constructor-arg index="3">
                 <null/>
@@ -43,7 +44,7 @@
             </constructor-arg>
         </bean>
 
-        <mongo:repositories base-package="com.szss.axon.trader.query.users.repositories"
-                            mongo-template-ref="mongoSpringTemplate"/>
+        <!--mongodb数据访问接口-->
+        <mongo:repositories base-package="com.szss.axon.trader.query.users.repositories" mongo-template-ref="mongoSpringTemplate"/>
     </beans>
 </beans>

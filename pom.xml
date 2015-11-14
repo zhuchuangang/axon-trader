@@ -13,15 +13,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <axon.version>2.4</axon.version>
-        <slf4j.version>1.7.5</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
+        <slf4j.version>1.7.12</slf4j.version>
+        <logback.version>1.1.3</logback.version>
+        <logback.ext.version>0.1.1</logback.ext.version>
 
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
+        <freemarker.version>2.3.23</freemarker.version>
+        <jackson.version>2.6.2</jackson.version>
 
         <!-- TODO check these for updates -->
         <javax.validation.version>1.0.0.GA</javax.validation.version>
-        <jackson.version>1.9.5</jackson.version>
         <httpclient.version>4.1.3</httpclient.version>
         <commons.io.version>1.4</commons.io.version>
         <xstream.version>1.4.3</xstream.version>
@@ -48,6 +50,38 @@
         <java.version>1.7</java.version>
         <maven.tomcat7.version>2.2</maven.tomcat7.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>nexus</id>
+            <name>oschina</name>
+            <url>http://maven.oschina.net/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>java.net-M2</id>
+            <name>java.net - Maven 2</name>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <name>Sonatype Repository</name>
+            <url>http://repository.sonatype.org/content/groups/forge/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>jboss.org</id>
+            <name>JBoss.org Repository</name>
+            <url>http://repository.jboss.org/nexus/content/repositories/releases/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -107,6 +141,13 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongodb.java.version}</version>
+        </dependency>
+
+        <!--freemarker-->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
         </dependency>
 
         <!--axon framework-->
@@ -230,6 +271,28 @@
             <version>${xstream.version}</version>
         </dependency>
 
+        <!--jackson-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
@@ -256,33 +319,25 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-access</artifactId>
+            <version>${logback.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <scope>runtime</scope>
+            <groupId>org.logback-extensions</groupId>
+            <artifactId>logback-ext-spring</artifactId>
+            <version>${logback.ext.version}</version>
         </dependency>
 
         <!-- Global test dependencies -->
@@ -311,6 +366,34 @@
                 <version>${maven.tomcat7.version}</version>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
     </build>
+
+    <profiles>
+        <profile>
+            <id>test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <logback_maven.home>/Users/zcg/axon-sample-log</logback_maven.home>
+                <mongodb_maven.host>127.0.0.1</mongodb_maven.host>
+                <mongodb_maven.port>27017</mongodb_maven.port>
+                <mongodb_maven.databaseName>trader</mongodb_maven.databaseName>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
